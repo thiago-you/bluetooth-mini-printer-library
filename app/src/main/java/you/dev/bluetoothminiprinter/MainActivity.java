@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,15 +14,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.UnsupportedEncodingException;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
 import you.dev.bluetoothminiprinter.components.BluetoothService;
+import you.dev.bluetoothminiprinter.components.Command;
+import you.dev.bluetoothminiprinter.components.PrintPicture;
+import you.dev.bluetoothminiprinter.components.PrinterCommand;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,7 +39,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /* encoding config */
     private static final String LATIN_CHARSET = "iso-8859-1";
-    private static final int DEFAULT_COUNTRY_CODE = 55;
+
+    /* QR Code size */
+    private static final int QR_WIDTH = 350;
+    private static final int QR_HEIGHT = 350;
 
     /* message types sent from the BluetoothService Handler */
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -49,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BluetoothService mBluetoothService = null;
     private EditText edtPrintText;
     private Button btnSelectPrinter, btnSendPrint, btnTestPrinter, btnPrintQrCode, btnSendImg, btnTakePicture, btnSelectImg;
-    private String mConnectedDeviceName;
+    private ImageView imgPrintable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSendImg = findViewById(R.id.btnSendImg);
         btnTakePicture = findViewById(R.id.btnTakePicture);
         btnSelectImg = findViewById(R.id.btnSelectImg);
+        imgPrintable = findViewById(R.id.imgPrintable);
 
         /* disable interface until select printer */
         edtPrintText.setEnabled(false);
@@ -189,24 +202,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnSendPrint: {
                 String msg = edtPrintText.getText().toString();
                 if (msg.length()>0) {
-                    SendDataByte(MainActivity.getPrintData(msg, LATIN_CHARSET));
-                    SendDataByte(new byte[] { 0x0A });
+                    sendDataByte(PrinterCommand.getPrintData(msg, LATIN_CHARSET));
+                    sendDataByte(Command.LF);
                 }else{
                     Toast.makeText(MainActivity.this, getString(R.string.empty), Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
             case R.id.btnPrintQrCode:
-                createImage();
+                printQrCode();
                 break;
             case R.id.btnSendImg:
-
+                printImage();
                 break;
             case R.id.btnTakePicture:
-
+                Log.e(getClass().getSimpleName(), "Take Picture Not implemented Yet");
                 break;
             case R.id.btnSelectImg:
-
+                Log.e(getClass().getSimpleName(), "Select Image Not implemented Yet");
                 break;
             default:
                 break;
@@ -218,34 +231,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case BluetoothService.STATE_CONNECTED:
-                            /* disable btn and change text */
-                            btnSelectPrinter.setText(getText(R.string.btn_is_connected));
-                            btnSelectPrinter.setEnabled(false);
+                case MESSAGE_STATE_CHANGE: {
+                    /* disable btn and change text */
+                    if (msg.arg1 == BluetoothService.STATE_CONNECTED) {
+                        btnSelectPrinter.setText(getText(R.string.btn_is_connected));
+                        btnSelectPrinter.setEnabled(false);
 
-                            /* enable interface */
-                            edtPrintText.setEnabled(true);
-                            btnSendPrint.setEnabled(true);
-                            btnTestPrinter.setEnabled(true);
-                            btnPrintQrCode.setEnabled(true);
-                            btnSendImg.setEnabled(true);
-                            btnTakePicture.setEnabled(true);
-                            btnSelectImg.setEnabled(true);
-
-                            break;
+                        /* enable interface */
+                        edtPrintText.setEnabled(true);
+                        btnSendPrint.setEnabled(true);
+                        btnTestPrinter.setEnabled(true);
+                        btnPrintQrCode.setEnabled(true);
+                        btnSendImg.setEnabled(true);
+                        btnTakePicture.setEnabled(true);
+                        btnSelectImg.setEnabled(true);
                     }
                     break;
-                case MESSAGE_DEVICE_NAME:
-                    /* save the connected device's name */
-                    mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
-                    Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                }
+                case MESSAGE_DEVICE_NAME: {
+                    String deviceName = msg.getData().getString(DEVICE_NAME);
+                    Toast.makeText(getApplicationContext(), "Connected to " + deviceName, Toast.LENGTH_SHORT).show();
                     break;
-                case MESSAGE_TOAST:
+                }
+                case MESSAGE_TOAST: {
                     Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
                     break;
-                case MESSAGE_CONNECTION_LOST:
+                }
+                case MESSAGE_CONNECTION_LOST: {
                     Toast.makeText(getApplicationContext(), "Device connection was lost", Toast.LENGTH_SHORT).show();
 
                     /* disable interface until select printer again */
@@ -257,9 +269,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btnTakePicture.setEnabled(false);
                     btnSelectImg.setEnabled(false);
                     break;
-                case MESSAGE_UNABLE_CONNECT:
+                }
+                case MESSAGE_UNABLE_CONNECT: {
                     Toast.makeText(getApplicationContext(), "Unable to connect device", Toast.LENGTH_SHORT).show();
                     break;
+                }
             }
         }
     };
@@ -288,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * Send data as byte
      */
-    private void SendDataByte(byte[] data) {
+    private void sendDataByte(byte[] data) {
         if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
             Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
         } else {
@@ -296,22 +310,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     * Prepare bytes to print
+    /*
+     * Create QR Code
      */
-    public static byte[] getPrintData(String data, String encoding) {
-        byte[] dataByte = null;
-
-        if (data == null || data.equals("") || data.length() < 1) {
-            return null;
-        }
-
+    private void printQrCode() {
         try {
-            dataByte = data.getBytes(encoding);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(MainActivity.class.getSimpleName(), e.getMessage(), e);
-        }
+            String text = edtPrintText.getText().toString();
 
-        return dataByte;
+            if (text.equals("") || text.length() < 1) {
+                Toast.makeText(this, getText(R.string.empty), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Hashtable<EncodeHintType, String> hints = new Hashtable<>();
+            hints.put(EncodeHintType.CHARACTER_SET, LATIN_CHARSET);
+            BitMatrix bitMatrix = new QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, QR_WIDTH, QR_HEIGHT, hints);
+
+            int[] pixels = new int[QR_WIDTH * QR_HEIGHT];
+            for (int y = 0; y < QR_HEIGHT; y++) {
+                for (int x = 0; x < QR_WIDTH; x++) {
+                    if (bitMatrix.get(x, y)) {
+                        pixels[y * QR_WIDTH + x] = 0xff000000;
+                    } else {
+                        pixels[y * QR_WIDTH + x] = 0xffffffff;
+                    }
+
+                }
+            }
+
+            Bitmap bitmap = Bitmap.createBitmap(QR_WIDTH, QR_HEIGHT, Bitmap.Config.ARGB_8888);
+            bitmap.setPixels(pixels, 0, QR_WIDTH, 0, 0, QR_WIDTH, QR_HEIGHT);
+            byte[] data = PrintPicture.POS_PrintBMP(bitmap, 384, 0);
+
+            sendDataByte(data);
+            sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
+            sendDataByte(PrinterCommand.POS_Set_Cut(1));
+            sendDataByte(PrinterCommand.POS_Set_PrtInit());
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), e.getMessage(), e);
+        }
+    }
+
+    /*
+     * Send img to print
+     */
+    private void printImage() {
+        Bitmap mBitmap = ((BitmapDrawable) imgPrintable.getDrawable()).getBitmap();
+
+        int nMode = 0;
+        int nPaperWidth = 384;
+
+        if (mBitmap != null) {
+            byte[] data = PrintPicture.POS_PrintBMP(mBitmap, nPaperWidth, nMode);
+
+            sendDataByte(Command.ESC_Init);
+            sendDataByte(Command.LF);
+            sendDataByte(data);
+            sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
+            sendDataByte(PrinterCommand.POS_Set_Cut(1));
+            sendDataByte(PrinterCommand.POS_Set_PrtInit());
+        }
     }
 }

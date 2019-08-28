@@ -27,4 +27,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    // QR Code Library
+    implementation project(':btsdk')
+    implementation group: 'com.google.zxing', name: 'core', version: '2.2'
 }
