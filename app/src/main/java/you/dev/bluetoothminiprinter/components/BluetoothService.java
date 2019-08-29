@@ -273,7 +273,6 @@ public class BluetoothService {
                     /* this is a blocking call and will only return on a successful connection or an exception */
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
-                    // TODO why is getting here?
                     Log.e(getClass().getSimpleName(), "accept() failed", e);
                     break;
                 }
