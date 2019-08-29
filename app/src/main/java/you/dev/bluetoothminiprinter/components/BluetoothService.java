@@ -31,7 +31,7 @@ public class BluetoothService {
     private static final String NAME = "MiniThermalPrinter";
     
     /* unique UUID for this application */
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FF");
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     /* member fields */
     private BluetoothAdapter mAdapter;
@@ -273,6 +273,7 @@ public class BluetoothService {
                     /* this is a blocking call and will only return on a successful connection or an exception */
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
+                    // TODO why is getting here?
                     Log.e(getClass().getSimpleName(), "accept() failed", e);
                     break;
                 }
