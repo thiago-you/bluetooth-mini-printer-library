@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText edtPrintText;
     private Button btnSelectPrinter, btnSendPrint, btnTestPrinter, btnPrintQrCode, btnSendImg, btnTakePicture, btnSelectImg;
     private ImageView imgPrintable;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnTakePicture = findViewById(R.id.btnTakePicture);
         btnSelectImg = findViewById(R.id.btnSelectImg);
         imgPrintable = findViewById(R.id.imgPrintable);
+        progressBar = findViewById(R.id.progressBar);
 
         /* disable interface until select printer */
         edtPrintText.setEnabled(false);
@@ -159,15 +162,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case REQUEST_CONNECT_DEVICE:
                 /* when DeviceListActivity returns with a device to connect */
                 if (resultCode == Activity.RESULT_OK) {
+                    /* start loading animation */
+                    progressBar.setVisibility(View.VISIBLE);
+
                     /* get the device address */
                     if (data.getExtras() != null) {
                         String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 
                         /* get the bluetooth device object */
                         if (BluetoothAdapter.checkBluetoothAddress(address)) {
+                            /* attempt to connect to the device */
                             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-
-                            // attempt to connect to the device
                             mBluetoothService.connect(device);
                         }
                     }
@@ -234,6 +239,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case MESSAGE_STATE_CHANGE: {
                     /* disable btn and change text */
                     if (msg.arg1 == BluetoothService.STATE_CONNECTED) {
+                        /* finish loading animation */
+                        progressBar.setVisibility(View.GONE);
+
                         btnSelectPrinter.setText(getText(R.string.btn_is_connected));
                         btnSelectPrinter.setEnabled(false);
 
@@ -254,10 +262,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
                 case MESSAGE_TOAST: {
+                    /* finish loading animation */
+                    progressBar.setVisibility(View.GONE);
+
                     Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
                     break;
                 }
                 case MESSAGE_CONNECTION_LOST: {
+                    /* finish loading animation */
+                    progressBar.setVisibility(View.GONE);
+
                     Toast.makeText(getApplicationContext(), "Device connection was lost", Toast.LENGTH_SHORT).show();
 
                     /* disable interface until select printer again */
@@ -271,6 +285,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
                 case MESSAGE_UNABLE_CONNECT: {
+                    /* finish loading animation */
+                    progressBar.setVisibility(View.GONE);
+
                     Toast.makeText(getApplicationContext(), "Unable to connect device", Toast.LENGTH_SHORT).show();
                     break;
                 }
@@ -355,20 +372,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Send img to print
      */
     private void printImage() {
-        Bitmap mBitmap = ((BitmapDrawable) imgPrintable.getDrawable()).getBitmap();
+        if (imgPrintable.getDrawable() != null) {
+            Bitmap mBitmap = ((BitmapDrawable) imgPrintable.getDrawable()).getBitmap();
 
-        int nMode = 0;
-        int nPaperWidth = 384;
+            int nMode = 0;
+            int nPaperWidth = 384;
 
-        if (mBitmap != null) {
-            byte[] data = PrintPicture.POS_PrintBMP(mBitmap, nPaperWidth, nMode);
+            if (mBitmap != null) {
+                byte[] data = PrintPicture.POS_PrintBMP(mBitmap, nPaperWidth, nMode);
 
-            sendDataByte(Command.ESC_Init);
-            sendDataByte(Command.LF);
-            sendDataByte(data);
-            sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
-            sendDataByte(PrinterCommand.POS_Set_Cut(1));
-            sendDataByte(PrinterCommand.POS_Set_PrtInit());
+                sendDataByte(Command.ESC_Init);
+                sendDataByte(Command.LF);
+                sendDataByte(data);
+                sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
+                sendDataByte(PrinterCommand.POS_Set_Cut(1));
+                sendDataByte(PrinterCommand.POS_Set_PrtInit());
+            }
         }
     }
 }
