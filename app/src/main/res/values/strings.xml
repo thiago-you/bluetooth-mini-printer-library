@@ -15,6 +15,7 @@
     <string name="not_connected">Please, connect a Bluetooth Mini Printer</string>
     <string name="empty">Printer text input is empty</string>
     <string name="img_printable">Image to be send to printer</string>
+    <string name="no_pictures">No pictures found</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">Searching Devices…</string>

@@ -6,10 +6,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.zxing.BarcodeFormat;
@@ -30,6 +31,7 @@ import java.util.Hashtable;
 
 import you.dev.bluetoothminiprinter.components.BluetoothService;
 import you.dev.bluetoothminiprinter.components.Command;
+import you.dev.bluetoothminiprinter.components.PermissionHandler;
 import you.dev.bluetoothminiprinter.components.PrintPicture;
 import you.dev.bluetoothminiprinter.components.PrinterCommand;
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 100;
     private static final int REQUEST_CONNECT_DEVICE = 101;
+    private static final int REQUEST_CAMERA = 102;
 
     /* encoding config */
     private static final String LATIN_CHARSET = "iso-8859-1";
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnSelectPrinter, btnSendPrint, btnTestPrinter, btnPrintQrCode, btnSendImg, btnTakePicture, btnSelectImg;
     private ImageView imgPrintable;
     private ProgressBar progressBar;
+    private Bitmap imgBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         initUI();
+
+        /* check and request permissions */
+        PermissionHandler.requestDefaultPermissions(this);
     }
 
     @Override
@@ -115,6 +122,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /* stop the Bluetooth services */
         if (mBluetoothService != null) {
             mBluetoothService.stop();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PermissionHandler.PERMISSION_REQUEST_CODE) {
+            /* check if all permissions has been granted */
+            PermissionHandler.requestDefaultPermissions(this);
         }
     }
 
@@ -159,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE:
+            case REQUEST_CONNECT_DEVICE: {
                 /* when DeviceListActivity returns with a device to connect */
                 if (resultCode == Activity.RESULT_OK) {
                     /* start loading animation */
@@ -178,7 +195,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
                 break;
-            case REQUEST_ENABLE_BLUETOOTH:
+            }
+            case REQUEST_ENABLE_BLUETOOTH: {
                 /* when the request to enable Bluetooth returns */
                 if (resultCode == Activity.RESULT_OK) {
                     /* bluetooth is now enabled, so set up a session */
@@ -189,6 +207,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     finish();
                 }
                 break;
+            }
+            case REQUEST_CAMERA: {
+                if (resultCode == Activity.RESULT_OK){
+                    handleCameraPhoto(data);
+                } else {
+                    Toast.makeText(this, getText(R.string.no_pictures), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
         }
     }
 
@@ -221,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 printImage();
                 break;
             case R.id.btnTakePicture:
-                Log.e(getClass().getSimpleName(), "Take Picture Not implemented Yet");
+                openCamera();
                 break;
             case R.id.btnSelectImg:
                 Log.e(getClass().getSimpleName(), "Select Image Not implemented Yet");
@@ -351,7 +378,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         pixels[y * QR_WIDTH + x] = 0xffffffff;
                     }
-
                 }
             }
 
@@ -373,13 +399,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void printImage() {
         if (imgPrintable.getDrawable() != null) {
-            Bitmap mBitmap = ((BitmapDrawable) imgPrintable.getDrawable()).getBitmap();
-
             int nMode = 0;
             int nPaperWidth = 384;
 
-            if (mBitmap != null) {
-                byte[] data = PrintPicture.POS_PrintBMP(mBitmap, nPaperWidth, nMode);
+            if (imgBitmap != null) {
+                byte[] data = PrintPicture.POS_PrintBMP(imgBitmap, nPaperWidth, nMode);
 
                 sendDataByte(Command.ESC_Init);
                 sendDataByte(Command.LF);
@@ -388,6 +412,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 sendDataByte(PrinterCommand.POS_Set_Cut(1));
                 sendDataByte(PrinterCommand.POS_Set_PrtInit());
             }
+        }
+    }
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(takePictureIntent, REQUEST_CAMERA);
+    }
+
+    private void handleCameraPhoto(Intent intent) {
+        Bundle extras = intent.getExtras();
+
+        if (extras != null) {
+            imgBitmap = (Bitmap) extras.get("data");
+            imgPrintable.setImageBitmap(imgBitmap);
         }
     }
 }
