@@ -1,5 +1,6 @@
 # Bluetooth Mini Thermal Printer
 This is project is an updated implementation from the one [Joonik Team](https://github.com/Joonik/BlueToothDEMO) has ported. The original app was designed for eclipse and comes bundled with the printer.
+
 This new implementation is using the library "androidx" and is designed to work better on newer versions of Android, with a simple interface and UTF-8/ISO-8859-1 charset compatibility (latin).
 
 Improvements
