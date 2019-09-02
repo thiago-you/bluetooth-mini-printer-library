@@ -12,8 +12,8 @@ Improvements
 
 Compatible with (tested)
 -------------------
-    [58mm Mini Bluetooth](https://www.amazon.com/AGPtEK%C2%AE-Bluetooth-Thermal-Software-Rechargeable/dp/B00XKMQLFI/)
-    [Wireless Bluetooth Receipt Thermal Printer](https://www.amazon.com/AGPtEK%C2%AE-Bluetooth-Thermal-Software-Rechargeable/dp/B00XKMQLFI/)
+    - https://www.amazon.com/AGPtEK%C2%AE-Bluetooth-Thermal-Software-Rechargeable/dp/B00XKMQLFI/
+    - https://www.amazon.com/AGPtEK%C2%AE-Bluetooth-Thermal-Software-Rechargeable/dp/B00XKMQLFI/
 
 
 Requirements
