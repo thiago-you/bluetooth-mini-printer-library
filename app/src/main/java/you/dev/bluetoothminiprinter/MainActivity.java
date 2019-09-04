@@ -26,6 +26,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_ENABLE_BLUETOOTH = 100;
     private static final int REQUEST_CONNECT_DEVICE = 101;
     private static final int REQUEST_CAMERA = 102;
+    private static final int REQUEST_SELECT_PICTURE = 103;
 
     /* encoding config */
     private static final String LATIN_CHARSET = "iso-8859-1";
@@ -209,8 +211,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case REQUEST_CAMERA: {
+                if (resultCode == Activity.RESULT_OK) {
+                    Bundle extras = data.getExtras();
+
+                    if (extras != null && extras.get("data") instanceof Bitmap) {
+                        imgBitmap = (Bitmap) extras.get("data");
+                        imgPrintable.setImageBitmap(imgBitmap);
+                    }
+                } else {
+                    Toast.makeText(this, getText(R.string.no_pictures), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+            case REQUEST_SELECT_PICTURE: {
                 if (resultCode == Activity.RESULT_OK){
-                    handleCameraPhoto(data);
+                    if (data != null && data.getData() != null) {
+                        try {
+                            imgBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                            imgPrintable.setImageBitmap(imgBitmap);
+                        } catch (IOException e) {
+                            Log.e(getClass().getSimpleName(), e.getMessage(), e);
+                        }
+                    }
                 } else {
                     Toast.makeText(this, getText(R.string.no_pictures), Toast.LENGTH_SHORT).show();
                 }
@@ -233,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.btnSendPrint: {
                 String msg = edtPrintText.getText().toString();
-                if (msg.length()>0) {
+                if (msg.length() > 0) {
                     sendDataByte(PrinterCommand.getPrintData(msg, LATIN_CHARSET));
                     sendDataByte(Command.LF);
                 }else{
@@ -251,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 openCamera();
                 break;
             case R.id.btnSelectImg:
-                Log.e(getClass().getSimpleName(), "Select Image Not implemented Yet");
+                selectPicture();
                 break;
             default:
                 break;
@@ -420,12 +442,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(takePictureIntent, REQUEST_CAMERA);
     }
 
-    private void handleCameraPhoto(Intent intent) {
-        Bundle extras = intent.getExtras();
+    private void selectPicture() {
+        Intent intent = new Intent();
 
-        if (extras != null) {
-            imgBitmap = (Bitmap) extras.get("data");
-            imgPrintable.setImageBitmap(imgBitmap);
-        }
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+
+        startActivityForResult(Intent.createChooser(intent, "Select picture..."), REQUEST_SELECT_PICTURE);
     }
 }
