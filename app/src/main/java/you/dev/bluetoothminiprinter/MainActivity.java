@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
@@ -56,8 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int MESSAGE_WRITE = 3;
     public static final int MESSAGE_DEVICE_NAME = 4;
     public static final int MESSAGE_TOAST = 5;
-    public static final int MESSAGE_CONNECTION_LOST = 6;
-    public static final int MESSAGE_UNABLE_CONNECT = 7;
+    private static final int MESSAGE_CONNECTION_LOST = 6;
+    private static final int MESSAGE_UNABLE_CONNECT = 7;
 
     /* key names received from the BluetoothService Handler */
     public static final String DEVICE_NAME = "device_name";
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BluetoothService mBluetoothService = null;
     private EditText edtPrintText;
     private Button btnSelectPrinter, btnSendPrint, btnTestPrinter, btnPrintQrCode, btnSendImg, btnTakePicture, btnSelectImg;
+    private FloatingActionButton btnRemoveImg;
     private ImageView imgPrintable;
     private ProgressBar progressBar;
     private Bitmap imgBitmap;
@@ -151,16 +153,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnTakePicture = findViewById(R.id.btnTakePicture);
         btnSelectImg = findViewById(R.id.btnSelectImg);
         imgPrintable = findViewById(R.id.imgPrintable);
+        btnRemoveImg = findViewById(R.id.btnRemoveImg);
         progressBar = findViewById(R.id.progressBar);
 
         /* disable interface until select printer */
-        edtPrintText.setEnabled(false);
+        /*edtPrintText.setEnabled(false);
         btnSendPrint.setEnabled(false);
         btnTestPrinter.setEnabled(false);
         btnPrintQrCode.setEnabled(false);
         btnSendImg.setEnabled(false);
         btnTakePicture.setEnabled(false);
         btnSelectImg.setEnabled(false);
+        btnRemoveImg.setEnabled(false);*/
 
         /* implement self click listener */
         btnSelectPrinter.setOnClickListener(this);
@@ -170,6 +174,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSendImg.setOnClickListener(this);
         btnTakePicture.setOnClickListener(this);
         btnSelectImg.setOnClickListener(this);
+        btnRemoveImg.setOnClickListener(this);
+
+        /* hide remove button */
+        btnRemoveImg.hide();
 
         /* start service */
         mBluetoothService = new BluetoothService(this, mHandler);
@@ -215,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Bundle extras = data.getExtras();
 
                     if (extras != null && extras.get("data") instanceof Bitmap) {
+                        btnRemoveImg.show();
                         imgBitmap = (Bitmap) extras.get("data");
                         imgPrintable.setImageBitmap(imgBitmap);
                     }
@@ -227,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (resultCode == Activity.RESULT_OK){
                     if (data != null && data.getData() != null) {
                         try {
+                            btnRemoveImg.show();
                             imgBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
                             imgPrintable.setImageBitmap(imgBitmap);
                         } catch (IOException e) {
@@ -258,25 +268,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (msg.length() > 0) {
                     sendDataByte(PrinterCommand.getPrintData(msg, LATIN_CHARSET));
                     sendDataByte(Command.LF);
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, getString(R.string.empty), Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
-            case R.id.btnPrintQrCode:
+            case R.id.btnPrintQrCode: {
                 printQrCode();
                 break;
-            case R.id.btnSendImg:
+            }
+            case R.id.btnSendImg: {
                 printImage();
                 break;
-            case R.id.btnTakePicture:
+            }
+            case R.id.btnTakePicture: {
                 openCamera();
                 break;
-            case R.id.btnSelectImg:
+            }
+            case R.id.btnSelectImg: {
                 selectPicture();
                 break;
-            default:
+            }
+            case R.id.btnRemoveImg: {
+                removeImg();
                 break;
+            }
         }
     }
 
@@ -302,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         btnSendImg.setEnabled(true);
                         btnTakePicture.setEnabled(true);
                         btnSelectImg.setEnabled(true);
+                        btnRemoveImg.setEnabled(true);
                     }
                     break;
                 }
@@ -450,5 +467,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 
         startActivityForResult(Intent.createChooser(intent, "Select picture..."), REQUEST_SELECT_PICTURE);
+    }
+
+    private void removeImg() {
+        imgBitmap = null;
+        imgPrintable.setImageBitmap(null);
+        btnRemoveImg.hide();
     }
 }
