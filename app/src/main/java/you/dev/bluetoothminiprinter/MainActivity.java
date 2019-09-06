@@ -157,14 +157,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressBar = findViewById(R.id.progressBar);
 
         /* disable interface until select printer */
-        /*edtPrintText.setEnabled(false);
+        edtPrintText.setEnabled(false);
         btnSendPrint.setEnabled(false);
         btnTestPrinter.setEnabled(false);
         btnPrintQrCode.setEnabled(false);
         btnSendImg.setEnabled(false);
         btnTakePicture.setEnabled(false);
         btnSelectImg.setEnabled(false);
-        btnRemoveImg.setEnabled(false);*/
+        btnRemoveImg.setEnabled(false);
 
         /* implement self click listener */
         btnSelectPrinter.setOnClickListener(this);
