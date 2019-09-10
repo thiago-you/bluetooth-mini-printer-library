@@ -425,9 +425,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             byte[] data = PrintPicture.POS_PrintBMP(bitmap, 384, 0);
 
             sendDataByte(data);
-            sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
-            sendDataByte(PrinterCommand.POS_Set_Cut(1));
-            sendDataByte(PrinterCommand.POS_Set_PrtInit());
+            sendDataByte(PrinterCommand.setPrintAndFeed(30));
+            sendDataByte(PrinterCommand.setPaperCut(1));
+            sendDataByte(PrinterCommand.setPrinterInit());
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), e.getMessage(), e);
         }
@@ -447,9 +447,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 sendDataByte(Command.ESC_Init);
                 sendDataByte(Command.LF);
                 sendDataByte(data);
-                sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
-                sendDataByte(PrinterCommand.POS_Set_Cut(1));
-                sendDataByte(PrinterCommand.POS_Set_PrtInit());
+                sendDataByte(PrinterCommand.setPrintAndFeed(30));
+                sendDataByte(PrinterCommand.setPaperCut(1));
+                sendDataByte(PrinterCommand.setPrinterInit());
             }
         }
     }
