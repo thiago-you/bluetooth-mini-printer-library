@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressBar progressBar;
     private Bitmap imgBitmap;
 
+    private boolean isRequestingBluetooth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +100,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         /* if Bluetooth is not on, request that it be enabled. */
         /* otherwise, setup the session */
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (!mBluetoothAdapter.isEnabled() && !isRequestingBluetooth) {
+            isRequestingBluetooth = true;
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
         } else {
@@ -207,6 +210,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case REQUEST_ENABLE_BLUETOOTH: {
+                isRequestingBluetooth = false;
+
                 /* when the request to enable Bluetooth returns */
                 if (resultCode == Activity.RESULT_OK) {
                     /* bluetooth is now enabled, so set up a session */
