@@ -59,7 +59,6 @@ public class BluetoothService {
         mHandler = handler;
     }
 
-
     /**
      * Set the current state of the connection
      *
@@ -453,7 +452,7 @@ public class BluetoothService {
          */
         public void write(byte[] buffer) {
             try {
-                /* cancels Chinese  character mode (FS .) */
+                /* cancels Chinese character mode (FS .) */
                 mmOutStream.write(0x1C);
                 mmOutStream.write(0x2E);
 
@@ -464,6 +463,8 @@ public class BluetoothService {
 
                 /* write and flush buffer */
                 mmOutStream.write(buffer);
+
+                /* write data */
                 mmOutStream.flush();
 
                 /* share the sent message back to the UI Activity */

@@ -273,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (msg.length() > 0) {
                     sendDataByte(PrinterCommand.getPrintData(msg, LATIN_CHARSET));
                     sendDataByte(Command.LF);
+                    sendDataByte(Command.newLine);
                 } else {
                     Toast.makeText(MainActivity.this, getString(R.string.empty), Toast.LENGTH_SHORT).show();
                 }

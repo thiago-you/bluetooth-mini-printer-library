@@ -14,7 +14,12 @@ public class Command {
 	private static final byte FF = 0x0C;
 	public static final byte PIECE = (byte) 0xFF;
 	public static final byte NUL = (byte) 0x00;
-	
+
+	/**
+	 * New lines byte to prevent some printer device issues
+	 */
+	public static byte[] newLine = new byte[] { '\n', '\n' };
+
 	//打印机初始化
 	public static byte[] ESC_Init = new byte[] {ESC, '@' };
 	
