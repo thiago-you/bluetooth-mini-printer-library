@@ -32,7 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
 import you.dev.bluetoothminiprinter.components.BluetoothService;
-import you.dev.bluetoothminiprinter.components.Command;
 import you.dev.bluetoothminiprinter.components.PermissionHandler;
 import you.dev.bluetoothminiprinter.components.PrintPicture;
 import you.dev.bluetoothminiprinter.components.PrinterCommand;
@@ -272,8 +271,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String msg = edtPrintText.getText().toString();
                 if (msg.length() > 0) {
                     sendDataByte(PrinterCommand.getPrintData(msg, LATIN_CHARSET));
-                    sendDataByte(Command.LF);
-                    sendDataByte(Command.newLine);
+                    sendDataByte(PrinterCommand.LF);
+                    sendDataByte(PrinterCommand.newLine);
                 } else {
                     Toast.makeText(MainActivity.this, getString(R.string.empty), Toast.LENGTH_SHORT).show();
                 }
@@ -450,8 +449,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (imgBitmap != null) {
                 byte[] data = PrintPicture.POS_PrintBMP(imgBitmap, nPaperWidth, nMode);
 
-                sendDataByte(Command.ESC_Init);
-                sendDataByte(Command.LF);
+                sendDataByte(PrinterCommand.ESC_Init);
+                sendDataByte(PrinterCommand.LF);
                 sendDataByte(data);
                 sendDataByte(PrinterCommand.setPrintAndFeed(30));
                 sendDataByte(PrinterCommand.setPaperCut(1));

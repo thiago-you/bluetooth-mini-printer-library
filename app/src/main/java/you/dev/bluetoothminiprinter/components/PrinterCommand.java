@@ -8,11 +8,36 @@ import you.dev.bluetoothminiprinter.MainActivity;
 
 public class PrinterCommand {
 
+    private static final byte ESC = 0x1B;
+    private static final byte GS = 0x1D;
+    private static final byte NL = 0x0A;
+
+    /**
+     * New lines byte to prevent some printer device issues
+     */
+    public static byte[] newLine = new byte[] { '\n', '\n' };
+
+    /**
+     * Printer device initialization
+     */
+    public static byte[] ESC_Init = new byte[] { ESC, '@' };
+
+    /**
+     * Print order
+     */
+    public static byte[] LF = new byte[] { NL };
+
+    /**
+     * Print and paper commands
+     */
+    private static byte[] ESC_J = new byte[] { ESC, 'J', 0x00 };
+    private static byte[] GS_V_m_n = new byte[] { GS, 'V', 'B', 0x00 };
+
     /**
      * Set printer initialization config
      */
     public static byte[] setPrinterInit() {
-        return PrinterCommand.byteArraysToBytes(new byte[][] { Command.ESC_Init });
+        return PrinterCommand.byteArraysToBytes(new byte[][] { PrinterCommand.ESC_Init });
     }
 
     /**
@@ -23,8 +48,8 @@ public class PrinterCommand {
             return null;
         }
 
-        Command.ESC_J[2] = (byte) feed;
-        return PrinterCommand.byteArraysToBytes(new byte[][] { Command.ESC_J });
+        PrinterCommand.ESC_J[2] = (byte) feed;
+        return PrinterCommand.byteArraysToBytes(new byte[][] { PrinterCommand.ESC_J });
     }
 
     /**
@@ -35,8 +60,8 @@ public class PrinterCommand {
             return null;
         }
 
-        Command.GS_V_m_n[3] = (byte) cut;
-        return PrinterCommand.byteArraysToBytes(new byte[][] { Command.GS_V_m_n });
+        PrinterCommand.GS_V_m_n[3] = (byte) cut;
+        return PrinterCommand.byteArraysToBytes(new byte[][] { PrinterCommand.GS_V_m_n });
     }
 
     /**
