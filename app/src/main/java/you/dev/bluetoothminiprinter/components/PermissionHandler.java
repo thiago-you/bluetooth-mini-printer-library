@@ -10,14 +10,12 @@ import androidx.core.app.ActivityCompat;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("unused WeakerAccess")
 public class PermissionHandler {
 
     public static final int PERMISSION_REQUEST_CODE = 99;
 
-    public static boolean requestDefaultPermissions(Activity activity) {
+    public static void requestDefaultPermissions(Activity activity) {
         List<String> permissionsToRequest;
-        boolean permissionStatus = true;
 
         /* check permission list */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -35,15 +33,10 @@ public class PermissionHandler {
 
             /* request permissions */
             if (permissionsToRequest.size() > 0) {
-                /* set flag false */
-                permissionStatus = false;
-
                 /* request permission list */
                 PermissionHandler.requestPermissions(activity, permissionsToRequest);
             }
         }
-
-        return permissionStatus;
     }
 
     private static List<String> getNotAllowedList(Activity activity, String[] permissionList) {
