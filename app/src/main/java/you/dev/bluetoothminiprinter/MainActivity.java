@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnRemoveImg.hide();
 
         /* start service */
-        mBluetoothService = new BluetoothService(this, mHandler);
+        mBluetoothService = new BluetoothService(mHandler);
     }
 
     @Override
