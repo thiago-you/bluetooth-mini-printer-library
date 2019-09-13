@@ -16,7 +16,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="@string/btn_connect"
             app:layout_constraintEnd_toEndOf="parent"
@@ -26,17 +26,17 @@
         <EditText
             android:id="@+id/edtPrintText"
             android:layout_width="0dp"
-            android:layout_height="135dp"
+            android:layout_height="100dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:hint="@string/input"
+            android:importantForAutofill="no"
             android:inputType="textCapSentences"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnSelectPrinter"
-            android:importantForAutofill="no" />
+            app:layout_constraintTop_toBottomOf="@+id/btnSelectPrinter" />
 
         <Button
             android:id="@+id/btnSendPrint"
@@ -136,9 +136,9 @@
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:contentDescription="@string/img_printable"
             android:maxHeight="150dp"
             app:layout_constraintBottom_toBottomOf="parent"
