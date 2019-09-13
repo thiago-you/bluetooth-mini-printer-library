@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imgPrintable;
     private ProgressBar progressBar;
     private Bitmap imgBitmap;
+    private Uri imageUri;
 
     private boolean isRequestingBluetooth;
 
@@ -145,14 +148,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressBar = findViewById(R.id.progressBar);
 
         /* disable interface until select printer */
-        edtPrintText.setEnabled(false);
+        /*edtPrintText.setEnabled(false);
         btnSendPrint.setEnabled(false);
         btnTestPrinter.setEnabled(false);
         btnPrintQrCode.setEnabled(false);
         btnSendImg.setEnabled(false);
         btnTakePicture.setEnabled(false);
         btnSelectImg.setEnabled(false);
-        btnRemoveImg.setEnabled(false);
+        btnRemoveImg.setEnabled(false);*/
 
         /* implement self click listener */
         btnSelectPrinter.setOnClickListener(this);
@@ -210,12 +213,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case REQUEST_CAMERA: {
                 if (resultCode == Activity.RESULT_OK) {
-                    Bundle extras = data.getExtras();
-
-                    if (extras != null && extras.get("data") instanceof Bitmap) {
+                    try {
                         btnRemoveImg.show();
-                        imgBitmap = (Bitmap) extras.get("data");
+                        imgBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                         imgPrintable.setImageBitmap(imgBitmap);
+                    } catch (IOException e) {
+                        Log.e(getClass().getSimpleName(), e.getMessage(), e);
                     }
                 } else {
                     Toast.makeText(this, getText(R.string.no_pictures), Toast.LENGTH_SHORT).show();
@@ -404,8 +407,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void openCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(takePictureIntent, REQUEST_CAMERA);
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, getString(R.string.camera_intent_title));
+        values.put(MediaStore.Images.Media.DESCRIPTION, getString(R.string.camera_intent_description));
+        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(intent, REQUEST_CAMERA);
     }
 
     private void selectPicture() {
@@ -419,6 +428,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void removeImg() {
+        imageUri = null;
         imgBitmap = null;
         imgPrintable.setImageBitmap(null);
         btnRemoveImg.hide();

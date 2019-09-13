@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Bluetooth Printer</string>
 
-    <!-- main-layout -->
+    <!-- MainActivity -->
     <string name="btn_connect">Connect Bluetooth Mini Printer</string>
     <string name="input">Please, enter text to be printed</string>
     <string name="btn_send_printer">Send Text</string>
@@ -16,6 +16,10 @@
     <string name="empty">Printer text input is empty</string>
     <string name="img_printable">Image to be send to printer</string>
     <string name="no_pictures">No pictures found</string>
+
+    <!-- camera intent -->
+    <string name="camera_intent_title">New Picture</string>
+    <string name="camera_intent_description">Open your camera to take a picture to print</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">Searching Devices…</string>
