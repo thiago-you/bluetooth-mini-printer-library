@@ -51,9 +51,6 @@ public class PrintHelper {
     private static int[] p5 = new int[] { 0, 4 };
     private static int[] p6 = new int[] { 0, 2 };
 
-    /* encoding config */
-    //private static final String LATIN_CHARSET = "iso-8859-1";
-
     /**
      * New lines byte to prevent some printer device issues
      */
@@ -281,7 +278,11 @@ public class PrintHelper {
 
     public static void printTest(BluetoothService mBluetoothService) {
         if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
-            String msg = "Testing Mini Thermal Printer \n\n abcdefghijklmnopqrstuvxyz \n ABCDEFGHIJKLMNOPQRSTUVXYZ \n 0123456789 \n UTF-8/ISO_8859_1 Charset: áçéãẽõôÁÇÃÉ";
+            String msg = "Testing Mini Thermal Printer " +
+                    "\n\n abcdefghijklmnopqrstuvxyz " +
+                    "\n ABCDEFGHIJKLMNOPQRSTUVXYZ " +
+                    "\n 0123456789 " +
+                    "\n UTF-8/ISO_8859_1 Charset: áçéãẽõôÁÇÃÉ";
 
             mBluetoothService.write(PrintHelper.getPrintData(msg, StandardCharsets.ISO_8859_1.name()));
             mBluetoothService.write(PrintHelper.LF);
