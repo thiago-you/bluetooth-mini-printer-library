@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,12 +19,8 @@ import you.dev.bluetoothminiprinter.MainActivity;
 /**
  * This class does all the work for setting up and managing Bluetooth
  * connections with other devices
- * 
- * It has a thread that listens for incoming connections, 
- * a thread for connecting with a device, and a
- * thread for performing data transmissions when connected
  */
-@SuppressWarnings("unused WeakerAccess")
+@SuppressWarnings("WeakerAccess")
 public class BluetoothService {
     /* name for the SDP record when creating server socket */
     private static final String NAME = "MiniThermalPrinter";
@@ -50,10 +45,9 @@ public class BluetoothService {
     /**
      * Constructor. Prepares a new BTPrinter session
      *
-     * @param context  The UI Activity Context
      * @param handler  A Handler to send messages back to the UI Activity
      */
-    public BluetoothService(Context context, Handler handler) {
+    public BluetoothService(Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;
