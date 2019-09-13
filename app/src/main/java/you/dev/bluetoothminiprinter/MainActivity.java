@@ -22,19 +22,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Hashtable;
 
 import you.dev.bluetoothminiprinter.components.BluetoothService;
 import you.dev.bluetoothminiprinter.components.PermissionHandler;
-import you.dev.bluetoothminiprinter.components.PrintPicture;
-import you.dev.bluetoothminiprinter.components.PrinterCommand;
+import you.dev.bluetoothminiprinter.components.PrintHelper;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -42,13 +35,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_CONNECT_DEVICE = 101;
     private static final int REQUEST_CAMERA = 102;
     private static final int REQUEST_SELECT_PICTURE = 103;
-
-    /* encoding config */
-    private static final String LATIN_CHARSET = "iso-8859-1";
-
-    /* QR Code size */
-    private static final int QR_WIDTH = 350;
-    private static final int QR_HEIGHT = 350;
 
     /* message types sent from the BluetoothService Handler */
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -264,26 +250,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.btnTestPrinter: {
-                printTest();
+                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+                } else {
+                    PrintHelper.printTest(mBluetoothService);
+                }
                 break;
             }
             case R.id.btnSendPrint: {
                 String msg = edtPrintText.getText().toString();
+
                 if (msg.length() > 0) {
-                    sendDataByte(PrinterCommand.getPrintData(msg, LATIN_CHARSET));
-                    sendDataByte(PrinterCommand.LF);
-                    sendDataByte(PrinterCommand.newLine);
+                    PrintHelper.print(mBluetoothService, msg);
                 } else {
                     Toast.makeText(MainActivity.this, getString(R.string.empty), Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
             case R.id.btnPrintQrCode: {
-                printQrCode();
+                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+                } else {
+                    printQrCode();
+                }
                 break;
             }
             case R.id.btnSendImg: {
-                printImage();
+                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+                } else {
+                    printImage();
+                }
                 break;
             }
             case R.id.btnTakePicture: {
@@ -366,73 +363,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    /**
-     * Print test string
-     */
-    private void printTest() {
-        String msg = "Testing Mini Thermal Printer \n\n abcdefghijklmnopqrstuvxyz \n ABCDEFGHIJKLMNOPQRSTUVXYZ \n UTF-8 Charset: áçéãẽõôÁÇÃÉ";
-        sendDataString(msg);
-    }
-
-    /**
-     * Send data as String
-     */
-    private void sendDataString(String data) {
-        if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-        } else {
-            if (data.length() > 0) {
-                mBluetoothService.write(data.getBytes(StandardCharsets.UTF_8));
-            }
-        }
-    }
-
-    /**
-     * Send data as byte
-     */
-    private void sendDataByte(byte[] data) {
-        if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-        } else {
-            mBluetoothService.write(data);
-        }
-    }
-
     /*
      * Create QR Code
      */
     private void printQrCode() {
         try {
+            /* validate text */
             String text = edtPrintText.getText().toString();
-
             if (text.equals("") || text.length() < 1) {
                 Toast.makeText(this, getText(R.string.empty), Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            Hashtable<EncodeHintType, String> hints = new Hashtable<>();
-            hints.put(EncodeHintType.CHARACTER_SET, LATIN_CHARSET);
-            BitMatrix bitMatrix = new QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, QR_WIDTH, QR_HEIGHT, hints);
+            /* parse text into qr code bytes to print */
+            byte[] data = PrintHelper.getQrCodeByte(text);
 
-            int[] pixels = new int[QR_WIDTH * QR_HEIGHT];
-            for (int y = 0; y < QR_HEIGHT; y++) {
-                for (int x = 0; x < QR_WIDTH; x++) {
-                    if (bitMatrix.get(x, y)) {
-                        pixels[y * QR_WIDTH + x] = 0xff000000;
-                    } else {
-                        pixels[y * QR_WIDTH + x] = 0xffffffff;
-                    }
-                }
-            }
-
-            Bitmap bitmap = Bitmap.createBitmap(QR_WIDTH, QR_HEIGHT, Bitmap.Config.ARGB_8888);
-            bitmap.setPixels(pixels, 0, QR_WIDTH, 0, 0, QR_WIDTH, QR_HEIGHT);
-            byte[] data = PrintPicture.POS_PrintBMP(bitmap, 384, 0);
-
-            sendDataByte(data);
-            sendDataByte(PrinterCommand.setPrintAndFeed(30));
-            sendDataByte(PrinterCommand.setPaperCut(1));
-            sendDataByte(PrinterCommand.setPrinterInit());
+            PrintHelper.print(mBluetoothService, data);
+            PrintHelper.print(mBluetoothService, PrintHelper.setPrintAndFeed(30));
+            PrintHelper.print(mBluetoothService, PrintHelper.setPaperCut(1));
+            PrintHelper.print(mBluetoothService, PrintHelper.setPrinterInit());
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), e.getMessage(), e);
         }
@@ -442,20 +391,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Send img to print
      */
     private void printImage() {
-        if (imgPrintable.getDrawable() != null) {
-            int nMode = 0;
-            int nPaperWidth = 384;
+        if (imgPrintable.getDrawable() != null && imgBitmap != null) {
+            byte[] data = PrintHelper.getBytesToPrint(imgBitmap);
 
-            if (imgBitmap != null) {
-                byte[] data = PrintPicture.POS_PrintBMP(imgBitmap, nPaperWidth, nMode);
-
-                sendDataByte(PrinterCommand.ESC_Init);
-                sendDataByte(PrinterCommand.LF);
-                sendDataByte(data);
-                sendDataByte(PrinterCommand.setPrintAndFeed(30));
-                sendDataByte(PrinterCommand.setPaperCut(1));
-                sendDataByte(PrinterCommand.setPrinterInit());
-            }
+            PrintHelper.print(mBluetoothService, PrintHelper.ESC_Init);
+            PrintHelper.print(mBluetoothService, PrintHelper.LF);
+            PrintHelper.print(mBluetoothService, data);
+            PrintHelper.print(mBluetoothService, PrintHelper.setPrintAndFeed(30));
+            PrintHelper.print(mBluetoothService, PrintHelper.setPaperCut(1));
+            PrintHelper.print(mBluetoothService, PrintHelper.setPrinterInit());
         }
     }
 
