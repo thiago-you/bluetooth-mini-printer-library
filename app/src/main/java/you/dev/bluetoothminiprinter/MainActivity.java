@@ -38,19 +38,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_CAMERA = 102;
     private static final int REQUEST_SELECT_PICTURE = 103;
 
-    /* message types sent from the BluetoothService Handler */
-    public static final int MESSAGE_STATE_CHANGE = 1;
-    public static final int MESSAGE_READ = 2;
-    public static final int MESSAGE_WRITE = 3;
-    public static final int MESSAGE_DEVICE_NAME = 4;
-    public static final int MESSAGE_TOAST = 5;
-    private static final int MESSAGE_CONNECTION_LOST = 6;
-    private static final int MESSAGE_UNABLE_CONNECT = 7;
-
-    /* key names received from the BluetoothService Handler */
-    public static final String DEVICE_NAME = "device_name";
-    public static final String TOAST = "toast";
-
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothService mBluetoothService = null;
     private EditText edtPrintText;
@@ -306,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MESSAGE_STATE_CHANGE: {
+                case BluetoothService.MSG_STATE_CHANGE: {
                     /* disable btn and change text */
                     if (msg.arg1 == BluetoothService.STATE_CONNECTED) {
                         /* finish loading animation */
@@ -327,19 +314,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     break;
                 }
-                case MESSAGE_DEVICE_NAME: {
-                    String deviceName = msg.getData().getString(DEVICE_NAME);
+                case BluetoothService.MSG_DEVICE_NAME: {
+                    String deviceName = msg.getData().getString(BluetoothService.KEY_DEVICE_NAME);
                     Toast.makeText(getApplicationContext(), "Connected to " + deviceName, Toast.LENGTH_SHORT).show();
                     break;
                 }
-                case MESSAGE_TOAST: {
+                case BluetoothService.MSG_TOAST: {
                     /* finish loading animation */
                     progressBar.setVisibility(View.GONE);
 
-                    Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), msg.getData().getString(BluetoothService.KEY_TOAST_MSG), Toast.LENGTH_SHORT).show();
                     break;
                 }
-                case MESSAGE_CONNECTION_LOST: {
+                case BluetoothService.MSG_CONNECTION_LOST: {
                     /* finish loading animation */
                     progressBar.setVisibility(View.GONE);
 
@@ -355,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btnSelectImg.setEnabled(false);
                     break;
                 }
-                case MESSAGE_UNABLE_CONNECT: {
+                case BluetoothService.MSG_UNABLE_CONNECT: {
                     /* finish loading animation */
                     progressBar.setVisibility(View.GONE);
 
