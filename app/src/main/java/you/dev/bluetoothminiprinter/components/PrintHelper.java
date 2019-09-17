@@ -246,10 +246,19 @@ public class PrintHelper {
     }
 
     /**
+     * Write byte to print
+     */
+    public static void write(BluetoothService mBluetoothService, byte[] data) {
+        if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
+            mBluetoothService.write(data);
+        }
+    }
+
+    /**
      * Send text to print
      */
     public static void print(BluetoothService mBluetoothService, String msg, String encoding) {
-        if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED && msg.length() > 0) {
+        if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
             mBluetoothService.write(PrintHelper.getPrintData(msg, encoding));
             mBluetoothService.write(PrintHelper.LF);
             mBluetoothService.write(PrintHelper.newLine);
@@ -260,7 +269,7 @@ public class PrintHelper {
      * Send text to print
      */
     public static void print(BluetoothService mBluetoothService, String msg) {
-        if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED && msg.length() > 0) {
+        if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
             mBluetoothService.write(PrintHelper.getPrintData(msg, StandardCharsets.ISO_8859_1.name()));
             mBluetoothService.write(PrintHelper.LF);
             mBluetoothService.write(PrintHelper.newLine);
@@ -272,10 +281,19 @@ public class PrintHelper {
      */
     public static void print(BluetoothService mBluetoothService, byte[] data) {
         if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
+            mBluetoothService.write(PrintHelper.ESC_Init);
+            mBluetoothService.write(PrintHelper.LF);
             mBluetoothService.write(data);
+            mBluetoothService.write(PrintHelper.setPrintAndFeed(30));
+            mBluetoothService.write(PrintHelper.setPaperCut(1));
+            mBluetoothService.write(PrintHelper.setPrinterInit());
+            mBluetoothService.write(PrintHelper.newLine);
         }
     }
 
+    /**
+     * Send test data to print
+     */
     public static void printTest(BluetoothService mBluetoothService) {
         if (mBluetoothService.getState() == BluetoothService.STATE_CONNECTED) {
             String msg = "Testing Mini Thermal Printer " +

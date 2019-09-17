@@ -207,13 +207,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } catch (IOException e) {
                         Log.e(getClass().getSimpleName(), e.getMessage(), e);
                     }
-                } else {
-                    Toast.makeText(this, getText(R.string.no_pictures), Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
             case REQUEST_SELECT_PICTURE: {
-                if (resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
                     if (data != null && data.getData() != null) {
                         try {
                             btnRemoveImg.show();
@@ -223,8 +221,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             Log.e(getClass().getSimpleName(), e.getMessage(), e);
                         }
                     }
-                } else {
-                    Toast.makeText(this, getText(R.string.no_pictures), Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
@@ -368,10 +364,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             /* parse text into qr code bytes to print */
             byte[] data = PrintHelper.getQrCodeByte(text);
 
+            /* write data with default bytes */
             PrintHelper.print(mBluetoothService, data);
-            PrintHelper.print(mBluetoothService, PrintHelper.setPrintAndFeed(30));
-            PrintHelper.print(mBluetoothService, PrintHelper.setPaperCut(1));
-            PrintHelper.print(mBluetoothService, PrintHelper.setPrinterInit());
+
+            /* manual write all bytes */
+            //PrintHelper.write(mBluetoothService, PrintHelper.ESC_Init);
+            //PrintHelper.write(mBluetoothService, PrintHelper.LF);
+            //PrintHelper.write(mBluetoothService, data);
+            //PrintHelper.write(mBluetoothService, PrintHelper.setPrintAndFeed(30));
+            //PrintHelper.write(mBluetoothService, PrintHelper.setPaperCut(1));
+            //PrintHelper.write(mBluetoothService, PrintHelper.setPrinterInit());
         } catch (Exception e) {
             Log.e(getClass().getSimpleName(), e.getMessage(), e);
         }
@@ -384,12 +386,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (imgPrintable.getDrawable() != null && imgBitmap != null) {
             byte[] data = PrintHelper.getBytesToPrint(imgBitmap);
 
-            PrintHelper.print(mBluetoothService, PrintHelper.ESC_Init);
-            PrintHelper.print(mBluetoothService, PrintHelper.LF);
+            /* write data with default bytes */
             PrintHelper.print(mBluetoothService, data);
-            PrintHelper.print(mBluetoothService, PrintHelper.setPrintAndFeed(30));
-            PrintHelper.print(mBluetoothService, PrintHelper.setPaperCut(1));
-            PrintHelper.print(mBluetoothService, PrintHelper.setPrinterInit());
+
+            /* manual write all bytes */
+            //PrintHelper.write(mBluetoothService, PrintHelper.ESC_Init);
+            //PrintHelper.write(mBluetoothService, PrintHelper.LF);
+            //PrintHelper.write(mBluetoothService, data);
+            //PrintHelper.write(mBluetoothService, PrintHelper.setPrintAndFeed(30));
+            //PrintHelper.write(mBluetoothService, PrintHelper.setPaperCut(1));
+            //PrintHelper.write(mBluetoothService, PrintHelper.setPrinterInit());
+        } else {
+            Toast.makeText(this, R.string.no_img_printable, Toast.LENGTH_SHORT).show();
         }
     }
 
