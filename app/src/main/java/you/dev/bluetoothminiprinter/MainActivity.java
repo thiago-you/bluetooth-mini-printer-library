@@ -231,8 +231,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnSelectPrinter: {
-                Intent serverIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
+                startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
                 break;
             }
             case R.id.btnTestPrinter: {
