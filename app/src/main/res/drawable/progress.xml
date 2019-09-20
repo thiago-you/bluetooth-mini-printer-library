@@ -21,7 +21,7 @@
             android:useLevel="false"
             android:startColor="@color/progressStart"
             android:centerColor="@color/progressCenter"
-            android:endColor="@color/progressStart"
+            android:endColor="@color/progressEnd"
             android:angle="0"/>
 
     </shape>

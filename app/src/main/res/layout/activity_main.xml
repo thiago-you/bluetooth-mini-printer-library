@@ -145,6 +145,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:indeterminate="true"
             android:indeterminateDrawable="@drawable/progress"
             android:minWidth="180dp"
             android:minHeight="180dp"
