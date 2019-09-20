@@ -82,7 +82,7 @@ public class BluetoothService {
         mState = state;
 
         /* give the new state to the Handler so the UI Activity can update */
-        mHandler.obtainMessage(MSG_STATE_CHANGE, state, -1).sendToTarget();
+        mHandler.obtainMessage(BluetoothService.MSG_STATE_CHANGE, state, -1).sendToTarget();
     }
 
     /**
@@ -173,10 +173,10 @@ public class BluetoothService {
         mConnectedThread.start();
 
         /* send the name of the connected device back to the UI Activity */
-        Message msg = mHandler.obtainMessage(MSG_DEVICE_NAME);
+        Message msg = mHandler.obtainMessage(BluetoothService.MSG_DEVICE_NAME);
 
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_DEVICE_NAME, device.getName());
+        bundle.putString(BluetoothService.KEY_DEVICE_NAME, device.getName());
 
         msg.setData(bundle);
 
@@ -230,10 +230,10 @@ public class BluetoothService {
     private void connectionFailed() {
         setState(STATE_LISTEN);
 
-        Message msg = mHandler.obtainMessage(MSG_TOAST);
+        Message msg = mHandler.obtainMessage(BluetoothService.MSG_TOAST);
 
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_TOAST_MSG, "Unable to connect device");
+        bundle.putString(BluetoothService.KEY_TOAST_MSG, "Unable to connect device");
 
         msg.setData(bundle);
 
@@ -244,10 +244,10 @@ public class BluetoothService {
      * Indicate that the connection was lost and notify the UI Activity
      */
     private void connectionLost() {
-        Message msg = mHandler.obtainMessage(MSG_TOAST);
+        Message msg = mHandler.obtainMessage(BluetoothService.MSG_TOAST);
 
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_TOAST_MSG, "Device connection was lost");
+        bundle.putString(BluetoothService.KEY_TOAST_MSG, "Device connection was lost");
 
         msg.setData(bundle);
 
@@ -292,7 +292,7 @@ public class BluetoothService {
 
                 /* if a connection was accepted */
                 if (socket != null) {
-                    synchronized (this) {
+                    synchronized (BluetoothService.this) {
                         switch (mState) {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
@@ -370,13 +370,13 @@ public class BluetoothService {
                 }
 
                 /* start the service over to restart listening mode */
-                start();
+                BluetoothService.this.start();
 
                 return;
             }
 
             /* reset the ConnectThread because we're done */
-            synchronized (this) {
+            synchronized (BluetoothService.this) {
                 mConnectThread = null;
             }
 
@@ -434,13 +434,13 @@ public class BluetoothService {
 
                     if (bytes > 0) {
                         /* send the obtained bytes to the UI Activity */
-                        mHandler.obtainMessage(MSG_READ, bytes, -1, buffer).sendToTarget();
+                        mHandler.obtainMessage(BluetoothService.MSG_READ, bytes, -1, buffer).sendToTarget();
                     } else {
                         connectionLost();
 
                         if (mState != STATE_NONE) {
                             /* start the service over to restart listening mode */
-                            start();
+                            BluetoothService.this.start();
                         }
 
                         break;
@@ -451,7 +451,7 @@ public class BluetoothService {
 
                     if (mState != STATE_NONE) {
                         /* start the service over to restart listening mode */
-                        start();
+                        BluetoothService.this.start();
                     }
 
                     break;
@@ -482,7 +482,7 @@ public class BluetoothService {
                 mmOutStream.flush();
 
                 /* share the sent message back to the UI Activity */
-                mHandler.obtainMessage(MSG_WRITE, -1, -1, buffer).sendToTarget();
+                mHandler.obtainMessage(BluetoothService.MSG_WRITE, -1, -1, buffer).sendToTarget();
             } catch (IOException e) {
                 Log.e(getClass().getSimpleName(), "Exception during write", e);
             }
