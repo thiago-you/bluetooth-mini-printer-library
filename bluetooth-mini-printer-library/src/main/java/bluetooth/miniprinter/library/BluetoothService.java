@@ -1,4 +1,4 @@
-package you.dev.bluetoothminiprinter.components;
+package bluetooth.miniprinter.library;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -18,7 +18,7 @@ import java.util.UUID;
  * This class does all the work for setting up and managing Bluetooth
  * connections with other devices
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings("unused WeakerAccess")
 public class BluetoothService {
     /**
      * Name for the SDP record when creating server socket
@@ -55,8 +55,8 @@ public class BluetoothService {
     public static final String KEY_DEVICE_NAME = "device_name";
     public static final String KEY_TOAST_MSG = "toast_msg";
 
-    private BluetoothAdapter mAdapter;
-    private Handler mHandler;
+    private final BluetoothAdapter mAdapter;
+    private final Handler mHandler;
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;

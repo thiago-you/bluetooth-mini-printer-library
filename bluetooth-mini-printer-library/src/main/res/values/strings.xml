@@ -1,26 +1,5 @@
 <resources>
-    <string name="app_name">Bluetooth Printer</string>
-
-    <!-- MainActivity -->
-    <string name="btn_connect">Connect Bluetooth Mini Printer</string>
-    <string name="input">Please, enter text to be printed</string>
-    <string name="btn_send_printer">Send Text</string>
-    <string name="btn_test_printer">Test Printer</string>
-    <string name="send_img">Send Image</string>
-    <string name="btn_qr_code">Print QR Code</string>
-    <string name="btn_take_picture">Take Picture</string>
-    <string name="btn_select_img">Select Image</string>
-    <string name="btn_is_connected">It is Connected to a Bluetooth Printer</string>
-    <string name="bt_not_enabled_leaving">Bluetooth does not start, quit the program</string>
-    <string name="not_connected">Please, connect a Bluetooth Mini Printer</string>
-    <string name="empty">Printer text input is empty</string>
-    <string name="img_printable">Image to print</string>
-    <string name="no_img_printable">No images have been selected to send</string>
-    <string name="no_pictures">No pictures found</string>
-
-    <!-- camera intent -->
-    <string name="camera_intent_title">New Picture</string>
-    <string name="camera_intent_description">Open your camera to take a picture to print</string>
+    <string name="app_name">Bluetooth Mini Printer Library</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">Searching Devices…</string>
@@ -30,12 +9,5 @@
     <string name="title_paired_devices">Paired Devices</string>
     <string name="title_other_devices">Other Devices</string>
     <string name="button_scan">Scanning device</string>
-
-    <!--  Message -->
-    <string name="msg_state">Input Error!</string>
-    <string name="empty1">Input is empty, in the text box to enter the content to be converted &#8230;</string>
-    <string name="title_connecting">connecting…</string>
-    <string name="title_connected_to">connected: </string>
-    <string name="title_not_connected">Is not connected</string>
 
 </resources>

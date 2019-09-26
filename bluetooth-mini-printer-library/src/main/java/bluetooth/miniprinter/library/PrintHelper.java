@@ -1,4 +1,4 @@
-package you.dev.bluetoothminiprinter.components;
+package bluetooth.miniprinter.library;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
