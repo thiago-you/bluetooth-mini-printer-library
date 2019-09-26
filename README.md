@@ -22,7 +22,15 @@ You can use the activities under demo folder to quickly test the library and hav
     Target SDK >= 28
     
 ### Import library from Jitpack
-    - Add Jitpack repository into you project: maven { url 'https://jitpack.io' }
+    - Add Jitpack repository into you project:
+    ```
+        allprojects {
+            repositories {
+                ...
+                maven { url 'https://jitpack.io' }
+            }
+        }
+    ```
     - Add library implementation "implementation 'com.github.thiagoyou:bluetooth-mini-printer-library:Tag'"
     - Sync build.gradle and build your project
     
