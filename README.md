@@ -26,6 +26,5 @@ Follow these steps to import the library into your project:
 
     - Download the library
     - Go to you project under "File" -> "New" -> "Import Module"
-    - Choose the library, if it shows name error check "import" option and rename lib
-    - In build.gradle, import library as "implementation project(':library-name')"
+    - In build.gradle, import library as "implementation project(':bluetooth-mini-printer-library')"
     - Sync build.gradle and build your project
