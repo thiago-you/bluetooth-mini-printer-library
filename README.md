@@ -21,7 +21,12 @@ You can use the activities under demo folder to quickly test the library and hav
     Min SDK Version >= 23
     Target SDK >= 28
     
-### Import Library
+### Import library from [Jitpack](https://jitpack.io/docs/)
+    - Add Jitpack repository into you project: maven { url 'https://jitpack.io' }
+    - Add library implementation "implementation 'com.github.thiagoyou:bluetooth-mini-printer-library:Tag'"
+    - Sync build.gradle and build your project
+    
+### Download Library
 Follow these steps to import the library into your project:
 
     - Download the library
