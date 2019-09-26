@@ -1,1 +1,1 @@
-include ':app'
+include ':bluetooth-mini-printer-library'
