@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".demo.DemoActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +36,7 @@
 
         </activity>
 
-        <activity android:name=".DeviceListActivity"
+        <activity android:name=".demo.DeviceListActivity"
             android:label="@string/select_device"
             android:theme="@style/Theme.AppCompat.Dialog"
             android:configChanges="orientation|keyboardHidden" />

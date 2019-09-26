@@ -1,4 +1,4 @@
-package you.dev.bluetoothminiprinter;
+package you.dev.bluetoothminiprinter.demo;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -27,11 +27,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 
+import you.dev.bluetoothminiprinter.R;
 import you.dev.bluetoothminiprinter.components.BluetoothService;
 import you.dev.bluetoothminiprinter.components.PermissionHandler;
 import you.dev.bluetoothminiprinter.components.PrintHelper;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class DemoActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 100;
     private static final int REQUEST_CONNECT_DEVICE = 101;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_demo);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -163,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
             case REQUEST_CONNECT_DEVICE: {
                 /* when DeviceListActivity returns with a device to connect */
@@ -229,58 +232,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnSelectPrinter: {
-                Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
-                break;
-            }
-            case R.id.btnTestPrinter: {
-                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-                } else {
-                    PrintHelper.printTest(mBluetoothService);
-                }
-                break;
-            }
-            case R.id.btnSendPrint: {
-                String msg = edtPrintText.getText().toString();
+        int id = v.getId();
 
-                if (msg.length() > 0) {
-                    PrintHelper.print(mBluetoothService, msg);
-                } else {
-                    Toast.makeText(MainActivity.this, getString(R.string.empty), Toast.LENGTH_SHORT).show();
-                }
-                break;
+        /* can be refactored to use switch statement in application */
+        if (id == R.id.btnSelectPrinter) {
+            Intent intent = new Intent(DemoActivity.this, DeviceListActivity.class);
+            startActivityForResult(intent, REQUEST_CONNECT_DEVICE);
+        } else if (id == R.id.btnTestPrinter) {
+            if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+            } else {
+                PrintHelper.printTest(mBluetoothService);
             }
-            case R.id.btnPrintQrCode: {
-                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-                } else {
-                    printQrCode();
-                }
-                break;
+        } else if (id == R.id.btnSendPrint) {
+            String msg = edtPrintText.getText().toString();
+
+            if (msg.length() > 0) {
+                PrintHelper.print(mBluetoothService, msg);
+            } else {
+                Toast.makeText(DemoActivity.this, getString(R.string.empty), Toast.LENGTH_SHORT).show();
             }
-            case R.id.btnSendImg: {
-                if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
-                    Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
-                } else {
-                    printImage();
-                }
-                break;
+        } else if (id == R.id.btnPrintQrCode) {
+            if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+            } else {
+                printQrCode();
             }
-            case R.id.btnTakePicture: {
-                openCamera();
-                break;
+        } else if (id == R.id.btnSendImg) {
+            if (mBluetoothService.getState() != BluetoothService.STATE_CONNECTED) {
+                Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+            } else {
+                printImage();
             }
-            case R.id.btnSelectImg: {
-                selectPicture();
-                break;
-            }
-            case R.id.btnRemoveImg: {
-                removeImg();
-                break;
-            }
+        } else if (id == R.id.btnTakePicture) {
+            openCamera();
+        } else if (id == R.id.btnSelectImg) {
+            selectPicture();
+        } else if (id == R.id.btnRemoveImg) {
+            removeImg();
         }
     }
 

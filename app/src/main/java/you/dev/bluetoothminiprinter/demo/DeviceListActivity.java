@@ -1,4 +1,4 @@
-package you.dev.bluetoothminiprinter;
+package you.dev.bluetoothminiprinter.demo;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -18,6 +18,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Set;
+
+import you.dev.bluetoothminiprinter.R;
 
 public class DeviceListActivity extends AppCompatActivity {
 
