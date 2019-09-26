@@ -1,10 +1,10 @@
 # Bluetooth Mini Printer Library
 This library is an updated and compiled implementation from the one [Joonik Team](https://github.com/Joonik/BlueToothDEMO) has ported with a lot of effort. The original app was designed for eclipse and comes bundled with the printer.
 
-This new implementation is using the library "androidx" and is designed to work better on newer versions of Android, with a simple interface and UTF-8/ISO-8859-1 charset compatibility (latin).
+This new implementation is designed to Android Studio and are using the library "androidx" and work better on newer versions of Android, with a simple interface and UTF-8/ISO-8859-1 charset compatibility (latin).
 
 ### DEMO
-You can use the activities under demo folder to quickly test the library and have a example to your own implementation. An demo implementation can be found into [demo repository](https://github.com/thiagoyou/mini-thermal-printer) 
+You can use the activities under demo folder to quickly test the library and have a example to your own implementation. An demo implementation can be found into [demo repository](https://github.com/thiagoyou/bluetooth-mini-printer-demo) 
 
 ### Improvements
     - Simple interface
