@@ -16,10 +16,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Set;
 
+@Keep
 public class DeviceListActivity extends AppCompatActivity {
 
     public static final String EXTRA_DEVICE_ADDRESS = "device_address";
