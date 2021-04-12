@@ -18,7 +18,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
-@SuppressWarnings("unused WeakerAccess")
 public class PrintHelper {
 
     /**
@@ -43,13 +42,13 @@ public class PrintHelper {
     /**
      * Default bytes pos
      */
-    private static int[] p0 = new int[] { 0, 128 };
-    private static int[] p1 = new int[] { 0, 64 };
-    private static int[] p2 = new int[] { 0, 32 };
-    private static int[] p3 = new int[] { 0, 16 };
-    private static int[] p4 = new int[] { 0, 8 };
-    private static int[] p5 = new int[] { 0, 4 };
-    private static int[] p6 = new int[] { 0, 2 };
+    private static final int[] p0 = new int[] { 0, 128 };
+    private static final int[] p1 = new int[] { 0, 64 };
+    private static final int[] p2 = new int[] { 0, 32 };
+    private static final int[] p3 = new int[] { 0, 16 };
+    private static final int[] p4 = new int[] { 0, 8 };
+    private static final int[] p5 = new int[] { 0, 4 };
+    private static final int[] p6 = new int[] { 0, 2 };
 
     /**
      * New lines byte to prevent some printer device issues
@@ -69,8 +68,8 @@ public class PrintHelper {
     /**
      * Print and paper commands
      */
-    private static byte[] ESC_J = new byte[] { ESC, 'J', 0x00 };
-    private static byte[] GS_V_m_n = new byte[] { GS, 'V', 'B', 0x00 };
+    private static final byte[] ESC_J = new byte[] { ESC, 'J', 0x00 };
+    private static final byte[] GS_V_m_n = new byte[] { GS, 'V', 'B', 0x00 };
 
     /**
      * Set printer initialization config

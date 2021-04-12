@@ -1,5 +1,6 @@
 package bluetooth.miniprinter.library;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -18,7 +19,6 @@ import java.util.UUID;
  * This class does all the work for setting up and managing Bluetooth
  * connections with other devices
  */
-@SuppressWarnings("unused WeakerAccess")
 public class BluetoothService {
     /**
      * Name for the SDP record when creating server socket
@@ -149,6 +149,7 @@ public class BluetoothService {
      * @param socket  The BluetoothSocket on which the connection was made
      * @param device  The BluetoothDevice that has been connected
      */
+    @SuppressLint("MissingPermission")
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
         /* cancel the thread that completed the connection */
         if (mConnectThread != null) {
@@ -259,6 +260,7 @@ public class BluetoothService {
      * like a server-side client. It runs until a connection is accepted
      * (or until cancelled)
      */
+    @SuppressLint("MissingPermission")
     private class AcceptThread extends Thread {
         /* the local server socket */
         private final BluetoothServerSocket mmServerSocket;
@@ -330,6 +332,7 @@ public class BluetoothService {
      * with a device. It runs straight through; the connection either
      * succeeds or fails
      */
+    @SuppressLint("MissingPermission")
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;

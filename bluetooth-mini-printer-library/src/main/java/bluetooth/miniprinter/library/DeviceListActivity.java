@@ -1,5 +1,6 @@
 package bluetooth.miniprinter.library;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -19,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Set;
 
-@SuppressWarnings("unused")
 public class DeviceListActivity extends AppCompatActivity {
 
     public static final String EXTRA_DEVICE_ADDRESS = "device_address";
@@ -38,6 +38,7 @@ public class DeviceListActivity extends AppCompatActivity {
     /**
      * Initialize interface components
      */
+    @SuppressLint("MissingPermission")
     private void initUI() {
         /* initialize the button to perform device discovery */
         Button scanButton = findViewById(R.id.button_scan);
@@ -91,6 +92,7 @@ public class DeviceListActivity extends AppCompatActivity {
     }
 
     @Override
+    @SuppressLint("MissingPermission")
     protected void onDestroy() {
         super.onDestroy();
 
@@ -106,6 +108,7 @@ public class DeviceListActivity extends AppCompatActivity {
     /**
      * Start device discover with the BluetoothAdapter
      */
+    @SuppressLint("MissingPermission")
     private void doDiscovery() {
         /* indicate scanning in the title */
         setTitle(R.string.scanning);
@@ -125,6 +128,7 @@ public class DeviceListActivity extends AppCompatActivity {
         mBtAdapter.startDiscovery();
     }
 
+    @SuppressLint("MissingPermission")
     private final AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
@@ -154,6 +158,7 @@ public class DeviceListActivity extends AppCompatActivity {
      * The BroadcastReceiver that listens for discovered devices and
      * changes the title when discovery is finished
      */
+    @SuppressLint("MissingPermission")
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
