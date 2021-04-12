@@ -4,7 +4,7 @@ This library is an updated and compiled implementation from the one [Joonik Team
 This new implementation is designed to Android Studio and are using the library "androidx" to work better on android newer versions. It has a much simpler interface and UTF-8/ISO-8859-1 (Latin) charset compatibility.
 
 ### DEMO
-You can use the activities under demo folder to quickly test the library and have a example to your own implementation. An demo implementation can be found into [demo repository](https://github.com/thiagoyou/bluetooth-mini-printer-demo) 
+An demo implementation can be found into [demo repository](https://github.com/thiagoyou/bluetooth-mini-printer-demo)
 
 ### Improvements
     - Simple interface
