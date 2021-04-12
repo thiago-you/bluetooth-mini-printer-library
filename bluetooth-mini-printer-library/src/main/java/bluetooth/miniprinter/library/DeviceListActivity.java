@@ -173,7 +173,6 @@ public class DeviceListActivity extends AppCompatActivity {
                     mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                setProgressBarIndeterminateVisibility(false);
                 setTitle(R.string.select_device);
 
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
