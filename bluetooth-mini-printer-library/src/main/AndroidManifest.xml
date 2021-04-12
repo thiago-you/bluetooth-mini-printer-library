@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="bluetooth.miniprinter.library">
 
@@ -10,10 +9,11 @@
         android:supportsRtl="true"
         tools:ignore="AllowBackup">
 
-        <activity android:name="bluetooth.miniprinter.library.DeviceListActivity"
+        <activity
+            android:name="bluetooth.miniprinter.library.DeviceListActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/select_device"
-            android:theme="@style/Theme.AppCompat.Dialog"
-            android:configChanges="orientation|keyboardHidden" />
+            android:theme="@style/Theme.AppCompat.Dialog" />
 
     </application>
 
