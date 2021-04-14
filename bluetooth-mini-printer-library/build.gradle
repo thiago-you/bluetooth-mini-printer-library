@@ -4,7 +4,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 102
         versionName "1.2.0"
@@ -28,6 +28,8 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    // QR Code Library
-    implementation group: 'com.google.zxing', name: 'core', version: '3.4.0'
+    /* QR Code Library */
+    /* strict to last API 19 compatible release: 3.3.0 */
+    /* noinspection GradleDependency */
+    implementation group: 'com.google.zxing', name: 'core', version: '3.3.0'
 }
