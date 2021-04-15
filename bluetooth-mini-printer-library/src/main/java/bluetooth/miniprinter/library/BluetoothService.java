@@ -291,8 +291,8 @@ public class BluetoothService {
                     /* this is a blocking call and will only return on a successful connection or an exception */
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
-                    if (mState != STATE_NONE) {
-                        Log.e(getClass().getSimpleName(), "accept() failed", e);
+                    if (mState == STATE_NONE || mState == STATE_CONNECTING) {
+                        Log.e(getClass().getSimpleName(), "accept() failed: state " + mState, e);
                     }
                     break;
                 }
