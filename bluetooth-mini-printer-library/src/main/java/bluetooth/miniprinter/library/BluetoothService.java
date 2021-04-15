@@ -291,7 +291,9 @@ public class BluetoothService {
                     /* this is a blocking call and will only return on a successful connection or an exception */
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
-                    Log.e(getClass().getSimpleName(), "accept() failed", e);
+                    if (mState != STATE_NONE) {
+                        Log.e(getClass().getSimpleName(), "accept() failed", e);
+                    }
                     break;
                 }
 
@@ -428,39 +430,42 @@ public class BluetoothService {
 
         @Override
         public void run() {
-            int bytes;
+            if (mState == STATE_CONNECTED) {
+                int bytes;
 
-            /* keep listening to the InputStream while connected */
-            while (true) {
-                try {
-                    byte[] buffer = new byte[256];
+                /* keep listening to the InputStream while connected */
+                while (true) {
+                    try {
+                        byte[] buffer = new byte[256];
 
-                    /* read from the InputStream */
-                    bytes = mmInStream.read(buffer);
+                        /* read from the InputStream */
+                        bytes = mmInStream.read(buffer);
 
-                    if (bytes > 0) {
-                        /* send the obtained bytes to the UI Activity */
-                        mHandler.obtainMessage(BluetoothService.MSG_READ, bytes, -1, buffer).sendToTarget();
-                    } else {
+                        if (bytes > 0) {
+                            /* send the obtained bytes to the UI Activity */
+                            mHandler.obtainMessage(BluetoothService.MSG_READ, bytes, -1, buffer).sendToTarget();
+                        } else {
+                            connectionLost();
+
+                            if (mState != STATE_NONE) {
+                                /* start the service over to restart listening mode */
+                                BluetoothService.this.start();
+                            }
+
+                            break;
+                        }
+                    } catch (IOException e) {
                         connectionLost();
 
                         if (mState != STATE_NONE) {
+                            Log.e(getClass().getSimpleName(), "disconnected", e);
+
                             /* start the service over to restart listening mode */
                             BluetoothService.this.start();
                         }
 
                         break;
                     }
-                } catch (IOException e) {
-                    Log.e(getClass().getSimpleName(), "disconnected", e);
-                    connectionLost();
-
-                    if (mState != STATE_NONE) {
-                        /* start the service over to restart listening mode */
-                        BluetoothService.this.start();
-                    }
-
-                    break;
                 }
             }
         }
