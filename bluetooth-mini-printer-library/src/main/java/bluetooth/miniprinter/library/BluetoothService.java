@@ -277,6 +277,7 @@ public class BluetoothService {
             } catch (IOException e) {
                 Log.e(getClass().getSimpleName(), "listen() failed", e);
             }
+
             mmServerSocket = tmp;
         }
 
@@ -291,7 +292,7 @@ public class BluetoothService {
                     /* this is a blocking call and will only return on a successful connection or an exception */
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
-                    if (mState == STATE_NONE || mState == STATE_CONNECTING) {
+                    if (mState == STATE_LISTEN) {
                         Log.e(getClass().getSimpleName(), "accept() failed: state " + mState, e);
                     }
                     break;
